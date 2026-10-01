@@ -4,6 +4,18 @@ Automatización de **ParaBank** con Robot Framework y SeleniumLibrary. Las suite
 
 Aplicación: https://parabank.parasoft.com/parabank/
 
+## Instalación con pip
+
+```bash
+python -m venv .venv
+# Activa el entorno: .venv\Scripts\activate en Windows o source .venv/bin/activate en Linux/macOS
+python -m pip install -r requirements.txt
+robot --outputdir results tests
+rf-evidence build results/evidence --output results/business-reports
+```
+
+Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.1.0`. Poetry se conserva como alternativa.
+
 ## Tecnologías
 
 | Herramienta | Versión declarada | Responsabilidad |
@@ -217,6 +229,6 @@ poetry run rf-evidence build results/evidence --output results/business-reports
 
 Se genera un HTML autocontenido por caso, con estado final, tiempos, metadatos, hitos opcionales y capturas. Las capturas fallidas advierten por defecto sin cambiar el resultado del caso. El workflow E2E genera los HTML también si Robot falla y los incluye en el artefacto `parabank-results`.
 
-La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). Mientras se completa su primera publicación en PyPI, Poetry instala un commit fijo de ese repositorio; el lock conserva la revisión exacta. No se copia el código de la librería dentro del framework.
+La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.1.0 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
 
 Utiliza una carpeta de resultados nueva por ejecución o elimina los resultados anteriores antes de iniciar: el generador incluye todos los JSON encontrados.
