@@ -42,4 +42,6 @@ La librería se instala desde un commit Git fijo mientras se completa la publica
 
 ## Instalación desde PyPI
 
-La configuración actual usa Evidence Reporter 0.1.0 desde PyPI e importa `Library    EvidenceReporter`. Ambos workflows instalan con `python -m pip install -r requirements.txt`; Poetry queda como alternativa con el lock actualizado.
+La configuración actual usa Evidence Reporter 0.2.0 desde PyPI e importa `Library    EvidenceReporter`. Ambos workflows instalan con `python -m pip install -r requirements.txt`; Poetry queda como alternativa con el lock actualizado.
+
+La ampliación genera HTML, PDF y DOCX por caso, junto con manifest.json, en el artefacto parabank-results.
