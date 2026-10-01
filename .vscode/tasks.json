@@ -1,5 +1,36 @@
-{"version":"2.0.0","tasks":[
-{"label":"Robot: ejecutar","type":"shell","command":"poetry run robot --outputdir results Tests","group":{"kind":"test","isDefault":true},"problemMatcher":[]},
-{"label":"Robocop: revisar","type":"shell","command":"poetry run robocop check Tests UseCases Config","problemMatcher":[]},
-{"label":"Robocop: formatear","type":"shell","command":"poetry run robocop format Tests UseCases Config","problemMatcher":[]}
-]}
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Robot: ejecutar",
+      "type": "shell",
+      "command": "poetry run robot --outputdir results tests",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Robocop: revisar",
+      "type": "shell",
+      "command": "poetry run robocop check tests use_cases config",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Robocop: formatear",
+      "type": "shell",
+      "command": "poetry run robocop format tests use_cases config",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

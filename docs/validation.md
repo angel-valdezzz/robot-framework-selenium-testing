@@ -1,28 +1,27 @@
-# Validación del ejemplo
+# Validación de la refactorización
 
-Validado el 1 de octubre de 2026 con Python 3.12.
+Validada el 1 de octubre de 2026 con Python 3.12 y Robot Framework 7.5.
 
 | Comprobación | Resultado |
 | --- | --- |
-| Instalación con Poetry y resolución del lock | Correcta |
-| Robocop linter | Sin incidencias |
-| Robocop formatter | Formato correcto |
-| Robot Framework dry run | 5 casos generados por DataDriver; 5 aprobados |
-| Contratos Python | 5 comprobaciones aprobadas |
-| Registro por HTTP y mensaje de campos requeridos | Confirmados en el sitio público |
-| Localizadores de registro y resumen | Revisados contra HTML y código fuente de ParaBank |
-| Quality en GitHub Actions | Aprobado |
-| Ejecución Selenium con Chrome en GitHub Actions | 5 casos, 5 aprobados, 0 fallidos |
+| Resolución de dependencias con Poetry | Correcta; pytest retirado del proyecto y del lock |
+| Robocop | Sin incidencias; formato correcto |
+| Robot dry run | 5 casos generados, 5 aprobados |
+| Carga de datos y Pages mediante Robot | Aprobada: acceso por índice, asignación directa del usuario con Faker, ceros iniciales, credenciales vacías, índice fuera de rango e instancia POM |
+| Quality en GitHub Actions | Aprobado en la rama de refactorización |
+| E2E con Chrome en GitHub Actions | 5 casos, 5 aprobados, 0 fallidos |
 
-## Evidencia en GitHub Actions
+## Evidencia de la rama refactorizada
 
-- [Quality #1](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36890349865): linter, formato, contratos y dry run.
-- [ParaBank E2E #1](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36890538858): registro, acceso, consulta de cuentas, cierre de sesión y validaciones de campos requeridos. Ejecutado sobre el commit `6e444a844c207f3521e9eb319c82bc2580e2c662`.
+- [Quality](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36899619216): Robocop y dry run.
+- [ParaBank E2E #3](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36899775522): registro, acceso, identidad del cliente, consulta de cuentas, cierre de sesión y rechazo por campos requeridos.
 
-El workflow E2E publica `output.xml`, `log.html`, `report.html` y las capturas disponibles en el artefacto `parabank-results`. Su retención está configurada en 7 días.
+Ambas ejecuciones validan el commit `ed0c377fbbc6698ff333824a7306d22f5f0aa4f3` de `refactor/business-use-cases`. El workflow E2E publica los reportes Robot en el artefacto `parabank-results`, con retención de 7 días.
 
-## Limitación del entorno local de preparación
+La comprobación local de preparación de datos se ejecutó con Robot usando un archivo temporal, fuera del repositorio. No se añade una segunda suite de contratos ni un framework de pruebas adicional al proyecto.
 
-El entorno de preparación rechaza `socket()` de Chrome con `Operation not permitted`. Los cinco intentos locales reales fallaron en el setup con `SessionNotCreatedException`; no ejecutaron los pasos del negocio. La validación real se completó después en GitHub Actions, donde Chrome pudo ejecutar los cinco casos correctamente.
+## Alcance
 
-ParaBank es un demo compartido. Este resultado verifica la ejecución indicada; la disponibilidad del sitio y los reinicios de sus datos pueden afectar ejecuciones futuras.
+La refactorización cambia los nombres de carpetas a `snake_case`, compone casos de uso completos, importa instancias POM declarativas en mayúsculas y prepara los datos con PyTabify desde Robot, seleccionando filas por índice y generando usuarios con FakerLibrary (`es_MX`). La asignación directa modifica el atributo de la fila usada en el flujo; no reescribe la tabla ni el CSV. Todas las rutas de archivos en Robot se resuelven desde `${EXECDIR}`; se ejecuta desde la raíz del proyecto.
+
+El entorno local de preparación restringe los sockets de Chrome. La comprobación E2E se completó en un runner de GitHub Actions. ParaBank es un demo compartido: su disponibilidad y los reinicios de sus datos pueden afectar ejecuciones futuras.

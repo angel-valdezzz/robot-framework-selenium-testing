@@ -1,9 +1,8 @@
 *** Settings ***
-Documentation    Punto de composición de infraestructura importado por las suites.
+Documentation    Infraestructura del navegador compuesta por las suites.
 
-Variables        settings.py
+Variables        ${EXECDIR}/config/settings.py
 Library          SeleniumLibrary    timeout=${TIMEOUT}    run_on_failure=Capture Page Screenshot
-Library          test_data.py
 
 
 *** Keywords ***

@@ -12,7 +12,6 @@ jobs:
           python-version: '3.12'
       - run: pip install poetry==2.5.1
       - run: poetry install --no-interaction
-      - run: poetry run robocop check Tests UseCases Config
-      - run: poetry run robocop format --check Tests UseCases Config
-      - run: poetry run pytest -q
-      - run: poetry run robot --dryrun --outputdir results/dryrun Tests
+      - run: poetry run robocop check tests use_cases config
+      - run: poetry run robocop format --check tests use_cases config
+      - run: poetry run robot --dryrun --outputdir results/dryrun tests

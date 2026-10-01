@@ -1,0 +1,4 @@
+*** Test Cases ***,${row_index},[Tags]
+Usuario vacío,0,required
+Contraseña vacía,1,required
+Credenciales vacías,2,required

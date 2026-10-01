@@ -14,7 +14,7 @@ jobs:
           python-version: '3.12'
       - run: pip install poetry==2.5.1
       - run: poetry install --no-interaction
-      - run: poetry run robot --outputdir results Tests
+      - run: poetry run robot --outputdir results tests
       - uses: actions/upload-artifact@v4
         if: always()
         with:
