@@ -1,6 +1,6 @@
 # Robot Framework Selenium Testing
 
-Ejemplo de automatización de **ParaBank** con Robot Framework y SeleniumLibrary. Las pruebas describen intención de negocio, los localizadores viven en instancias Python y los datos se separan de los escenarios.
+Automatización de **ParaBank** con Robot Framework y SeleniumLibrary. Las suites preparan datos y llaman casos de uso completos. Las Pages contienen únicamente clases e instancias de localizadores.
 
 Aplicación: https://parabank.parasoft.com/parabank/
 
@@ -8,171 +8,185 @@ Aplicación: https://parabank.parasoft.com/parabank/
 
 | Herramienta | Versión declarada | Responsabilidad |
 | --- | --- | --- |
-| Python | 3.12–3.14 | Variables y preparación de datos |
+| Python | 3.12–3.14 | Archivos de variables y Pages |
 | Poetry | 2.5.1 recomendado | Entorno y dependencias reproducibles |
-| Robot Framework | 7.5.0 | Suites y keywords con estilo BDD |
+| Robot Framework | 7.5.0 | Suites, templates y keywords de negocio |
 | SeleniumLibrary | 6.9.0 | Interacción con el navegador |
-| DataDriver | 1.11.2 | Un caso ejecutable por fila CSV |
-| PyTabify (`pytabify`) | 3.0.0 | Tablas de datos con acceso plano por atributo |
+| DataDriver | 1.11.2 | Un caso ejecutable por fila de la matriz CSV |
+| PyTabify (`pytabify`) | 3.0.0 | Carga y preparación de tablas desde Robot |
 | Robocop | 9.1.0 | Linter y formatter |
 | RobotCode | Extensión VS Code | Análisis, ejecución y formato al guardar |
 
-`poetry.lock` fija las dependencias transitivas. No se necesita WebDriverManager: Selenium Manager resuelve el driver. Instala Chrome para la ejecución inicial; Selenium necesita acceso a Internet para descargar el driver cuando corresponde.
+`poetry.lock` fija las dependencias transitivas. Selenium Manager resuelve el driver; no se necesita WebDriverManager. Instala Chrome y permite acceso a Internet para descargar el driver cuando corresponda.
 
-## Arquitectura y dependencias
+## Arquitectura
 
-| Carpeta | Contenido | Puede depender de |
-| --- | --- | --- |
-| `Tests/` | Suites, templates, composición de escenarios BDD | Config, UseCases, DataDriver |
-| `Config/` | Variables, navegador y adaptador PyTabify | Librerías externas y Data/Tables |
-| `UseCases/` | Flujos y verificaciones de negocio | Pages y keywords de SeleniumLibrary compuestas por Tests |
-| `Pages/` | Clases Python e instancias de localizadores | Ninguna capa del proyecto |
-| `Data/Test/` | Matriz de ejecución DataDriver | Referencias `customer_id` a las tablas |
-| `Data/Tables/` | Datos sintéticos del cliente | Ninguna capa |
-| `Checks/` | Contratos de datos y de variables | Config y Pages |
+| Carpeta | Responsabilidad |
+| --- | --- |
+| `tests/` | Composición de infraestructura, preparación de datos y escenarios DataDriver |
+| `use_cases/` | Flujos completos de negocio y verificaciones de su resultado |
+| `pages/` | Clases Python declarativas e instancias con localizadores |
+| `config/` | Configuración, ciclo de vida del navegador y carga de tablas |
+| `data/test/` | Matrices DataDriver: nombre del caso, identificador y tags |
+| `data/tables/` | Datos de entrada y resultados esperados de cada caso |
+| `docs/` | Evidencia y alcance de la validación |
 
-La dirección del código es `Tests → UseCases → Pages`. `Config/bootstrap.resource` es el punto de composición que las suites importan: allí se declaran las librerías, se configuran las sesiones y se cierran los navegadores. UseCases no declara librerías ni administra archivos o navegadores. Pages no importa Selenium, no realiza acciones ni conoce Tests.
+La dependencia es `tests → use_cases → pages`. Las suites importan los recursos de `config` para componer las librerías externas. UseCases no importa librerías ni lee archivos, y Pages no importa Selenium ni ejecuta acciones.
 
-Es una arquitectura por capas inspirada en la regla de dependencia hexagonal. **No es una implementación hexagonal estricta**: los casos de uso llaman keywords de SeleniumLibrary directamente para conservar la simplicidad solicitada. Una hexagonal estricta requeriría puertos para esas interacciones.
+Es una arquitectura por capas inspirada en la regla de dependencia hexagonal. Los casos de uso llaman directamente keywords de SeleniumLibrary para conservar la sintaxis natural de Robot; una hexagonal estricta requeriría puertos para esas interacciones.
 
-## POM como variables Python
+## Casos de uso completos
 
-Cada módulo exporta una instancia mediante `get_variables()`. Robot no recibe la clase como variable:
+Las keywords públicas expresan operaciones de negocio:
+
+- `Registrar Cliente`: completa el alta y confirma que quedó registrado.
+- `Iniciar Sesión`: autentica al cliente y confirma su acceso.
+- `Consultar Cuentas Del Cliente`: comprueba la identidad del cliente y la disponibilidad de cuentas.
+- `Cerrar Sesión`: termina el acceso y confirma que volvió el formulario de login.
+- `Validar Rechazo De Acceso`: solicita acceso con los datos de la fila y confirma el rechazo esperado.
+
+El estilo inspirado en BDD se refleja en los nombres y la intención de negocio. Las suites llaman directamente estas keywords:
+
+```robotframework
+Registrar Cliente Y Consultar Sus Cuentas
+    [Arguments]    ${customer_id}
+    ${customer}=    Cargar Datos Del Cliente    ${customer_id}
+    Registrar Cliente    ${customer}
+    Cerrar Sesión
+    Iniciar Sesión    ${customer}
+    Consultar Cuentas Del Cliente    ${customer}
+    Cerrar Sesión
+```
+
+Los auxiliares dentro de los recursos, como `Completar Información Personal`, reducen el detalle técnico del flujo principal y llevan el tag `robot:private`. Robot avisa si se usan desde otro archivo; no es una barrera de acceso de Python.
+
+## Pages como variables Python
+
+Los localizadores se declaran como atributos de clase y se accede a ellos a través de una instancia:
 
 ```python
 class LoginPage:
-    def __init__(self):
-        self.submit = 'css:form[name="login"] input[type="submit"]'
+    username = 'css:form[name="login"] input[name="username"]'
+    submit = 'css:form[name="login"] input[type="submit"]'
 
-login_page = LoginPage()
-
-def get_variables():
-    return {"login_page": login_page}
+LOGIN_PAGE = LoginPage()
 ```
 
 ```robotframework
 *** Settings ***
-Variables    ../Pages/login_page.py
+Variables    ${EXECDIR}/pages/login_page.py
 
 *** Keywords ***
 Enviar Solicitud De Acceso
-    Click Element    ${login_page.submit}
+    Click Element    ${LOGIN_PAGE.submit}
 ```
 
-El POM es un repositorio de localizadores. La interacción permanece en Robot y se agrupa en keywords que expresan negocio. Los prefijos `Given`, `When`, `Then`, `And` y `But` son soportados por Robot; no se necesita Cucumber ni una librería BDD adicional.
+No hacen falta decoradores, `__init__`, `get_variables()` ni `__all__` para estas Pages. Las variables importadas usan mayúsculas (`LOGIN_PAGE`, `REGISTRATION_PAGE`, `ACCOUNTS_PAGE`); los atributos y argumentos locales usan `snake_case`.
 
-## Instalación
+## Configuración e infraestructura
 
-Desde la raíz del proyecto:
+- `config/settings.py`: URL, navegador, timeout, velocidad y opciones.
+- `config/browser.resource`: SeleniumLibrary, apertura y cierre del navegador.
+- `config/test_data.resource`: PyTabify, selección de filas por identificador y usuario único.
 
-```bash
-python -m pip install poetry==2.5.1
-poetry install
-```
-
-Poetry crea `.venv/` dentro del proyecto. No hace falta activar el entorno si ejecutas mediante `poetry run`.
-
-## Ejecución
-
-```bash
-# Todos los escenarios, Chrome sin interfaz por defecto
-poetry run robot --outputdir results Tests
-
-# Chrome visible
-poetry run robot --variable BROWSER:chrome --outputdir results Tests
-
-# Registro, acceso y cierre de sesión
-poetry run robot --include smoke --outputdir results/smoke Tests
-
-# Validaciones de campos requeridos
-poetry run robot --include negative --outputdir results/negative Tests
-
-# Otra URL, espera y velocidad
-poetry run robot --variable BASE_URL:https://parabank.parasoft.com/parabank/ --variable "TIMEOUT:25 seconds" --variable "SELENIUM_SPEED:0.2 seconds" --outputdir results Tests
-
-# Verificar imports, keywords y generación de casos sin navegador
-poetry run robot --dryrun --outputdir results/dryrun Tests
-
-# Contratos de los datos y las instancias POM
-poetry run pytest -q
-```
-
-Los valores de `--variable` tienen prioridad sobre `Config/settings.py`. `BROWSER_OPTIONS` permite opciones de Selenium cuando tu entorno lo necesita. Por ejemplo, en un contenedor Linux que ejecuta como root:
-
-```bash
-poetry run robot --variable 'BROWSER_OPTIONS:add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage")' --outputdir results Tests
-```
-
-Este ejemplo de opciones usa quoting de Bash. En una máquina normal, usa el comando de ejecución estándar.
-
-Los resultados están en `results/output.xml`, `results/log.html` y `results/report.html`. SeleniumLibrary adjunta capturas cuando falla una keyword. Se conservan los códigos de salida de Robot para CI.
-
-## Escenarios incluidos
-
-- Dos clientes distintos se registran, cierran sesión, ingresan y consultan su resumen de cuentas.
-- Tres combinaciones con usuario, contraseña o ambos vacíos reciben el rechazo esperado.
-
-Cada caso usa una sesión de navegador independiente. El nombre de usuario del registro se genera a partir de UUID y respeta el límite de 20 caracteres de ParaBank; no depende de las credenciales conocidas del demo ni modifica los CSV originales. ParaBank es un entorno compartido: disponibilidad y reinicios del servidor pueden afectar una ejecución real. El proyecto no reinicia ni limpia el banco público.
+La preparación de datos se implementa en Robot usando la librería oficial `pytabify.robot.PyTabifyLibrary`.
 
 ## DataDriver y PyTabify
 
-DataDriver decide **qué escenarios ejecutar**. Su CSV usa la cabecera `*** Test Cases ***`, columnas `${argumento}`, `[Tags]` y, opcionalmente, `[Documentation]`:
+DataDriver decide **qué casos ejecutar**. Su matriz contiene referencias a los datos:
 
 ```csv
 *** Test Cases ***,${customer_id},[Tags]
 Cliente de México,customer_mx,mexico
 ```
 
-PyTabify carga **los datos del cliente** desde `Data/Tables/customers.csv`. La suite invoca `Preparar Cliente De Prueba`, que busca `customer_id`, comprueba que exista una única fila y devuelve una fila plana con un usuario único.
+PyTabify carga **los datos de cada caso** desde `data/tables`. `Cargar Datos Del Cliente` busca una sola coincidencia por `customer_id`, genera un usuario de 20 caracteres con prefijo `rf_` y devuelve la fila. `Cargar Datos De Acceso` obtiene credenciales y mensaje esperado usando `access_case_id`.
 
-```robotframework
-${customer}=    Preparar Cliente De Prueba    ${customer_id}
-When El Cliente Solicita Su Alta En Banca En Línea    ${customer}
-Then El Cliente Queda Registrado En Banca En Línea    ${customer}
-```
+Los casos de uso reciben la fila correspondiente y acceden a `${customer.first_name}` o `${access.expected_message}` directamente. El CSV conserva texto, incluyendo el código postal `01000`. Las tablas originales no se reescriben durante las pruebas.
 
-Dentro del flujo se usa `${customer.first_name}`, `${customer.zip_code}` y `${customer.password}`, sin `.value` ni `Evaluate`. Los CSV conservan texto, incluyendo el código postal `01000`.
+Para agregar una variación:
 
-Para agregar una variación de cliente:
+1. Añade una fila con identificador único en `data/tables/customers.csv` o `data/tables/access_cases.csv`.
+2. Añade ese identificador en la matriz correspondiente de `data/test`.
+3. Ejecuta la suite; DataDriver genera el caso y PyTabify prepara sus datos.
 
-1. Agrega una fila con un `customer_id` único en `Data/Tables/customers.csv`.
-2. Agrega ese identificador en `Data/Test/customer_journey.csv`.
-3. Ejecuta la suite; DataDriver genera el caso y la infraestructura carga su tabla.
-
-## VS Code: linter y formato al guardar
-
-1. Abre la carpeta raíz del proyecto en VS Code.
-2. Instala las extensiones recomendadas por `.vscode/extensions.json`: RobotCode y Python.
-3. Ejecuta `poetry install`.
-4. Selecciona `.venv` con **RobotCode: Select Python Environment**. En Windows, el ejecutable está en `.venv/Scripts/python.exe`; en Linux/macOS, en `.venv/bin/python`.
-5. Guarda un archivo `.robot` o `.resource`.
-
-`.vscode/settings.json` establece RobotCode como formatter, activa `editor.formatOnSave` para Robot Framework y habilita el análisis de Robocop. RobotCode utiliza el formatter de Robocop instalado en el entorno seleccionado. Esta configuración formatea; el autocompletado de keywords y variables lo proporciona RobotCode.
-
-Comandos equivalentes:
+## Instalación y directorio de ejecución
 
 ```bash
-poetry run robocop check Tests UseCases Config
-poetry run robocop format Tests UseCases Config
-poetry run robocop format --check Tests UseCases Config
+git clone https://github.com/angel-valdezzz/robot-framework-selenium-testing.git
+cd robot-framework-selenium-testing
+python -m pip install poetry==2.5.1
+poetry install
 ```
 
-También hay tareas de VS Code para ejecutar, revisar y formatear. Si guardar no formatea, verifica el entorno seleccionado, el modo de lenguaje **Robot Framework** y que Robocop esté instalado en `.venv`.
+Poetry crea `.venv/` dentro del proyecto. Ejecuta los comandos **desde la raíz del proyecto**: los imports de archivos y las rutas de DataDriver y PyTabify usan `${EXECDIR}`.
+
+`${EXECDIR}` es el directorio desde el cual Robot inició la ejecución. No descubre la raíz del repositorio. Ejecutar desde la raíz es una convención explícita de este proyecto, aplicada también en las tareas de VS Code y GitHub Actions.
+
+## Comandos de ejecución
+
+```bash
+# Todos los casos, Chrome sin interfaz por defecto
+poetry run robot --outputdir results tests
+
+# Chrome visible
+poetry run robot --variable BROWSER:chrome --outputdir results tests
+
+# Registro, acceso, consulta de cuentas y cierre
+poetry run robot --include smoke --outputdir results/smoke tests
+
+# Validaciones de campos requeridos
+poetry run robot --include negative --outputdir results/negative tests
+
+# Otra URL, espera y velocidad
+poetry run robot --variable BASE_URL:https://parabank.parasoft.com/parabank/ --variable "TIMEOUT:25 seconds" --variable "SELENIUM_SPEED:0.2 seconds" --outputdir results tests
+
+# Verificar imports, keywords y generación de casos sin navegador
+poetry run robot --dryrun --outputdir results/dryrun tests
+
+# Linter y formatter
+poetry run robocop check tests use_cases config
+poetry run robocop format tests use_cases config
+poetry run robocop format --check tests use_cases config
+```
+
+Los valores de `--variable` tienen prioridad sobre `config/settings.py`. En un contenedor Linux ejecutado como root se pueden pasar opciones de Chrome (quoting de Bash):
+
+```bash
+poetry run robot --variable 'BROWSER_OPTIONS:add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage")' --outputdir results tests
+```
+
+Resultados: `results/output.xml`, `results/log.html` y `results/report.html`. SeleniumLibrary adjunta capturas cuando falla una keyword. Los códigos de salida de Robot se conservan para CI.
+
+## Escenarios incluidos
+
+Dos clientes distintos se registran, cierran sesión, ingresan y consultan sus cuentas. Otros tres casos validan usuario vacío, contraseña vacía o ambas credenciales vacías.
+
+Cada caso tiene una sesión de navegador independiente. Los registros usan nombres de usuario aleatorios para evitar depender de cuentas compartidas. ParaBank es un demo público: su disponibilidad y reinicios pueden afectar los resultados. El proyecto no reinicia ni limpia el banco.
+
+## VS Code: Robocop al guardar
+
+1. Abre la raíz del proyecto en VS Code.
+2. Instala las extensiones recomendadas: RobotCode y Python.
+3. Ejecuta `poetry install`.
+4. Selecciona `.venv` con **RobotCode: Select Python Environment**.
+5. Guarda un archivo `.robot` o `.resource`.
+
+`.vscode/settings.json` habilita el análisis Robocop, establece RobotCode como formatter y activa `editor.formatOnSave` para Robot Framework. RobotCode usa Robocop instalado en el entorno seleccionado. El formatter ajusta el estilo; RobotCode proporciona el autocompletado.
+
+Las tareas del editor ejecutan Robot y Robocop con `${workspaceFolder}` como directorio de trabajo. Si guardar no formatea, verifica el intérprete, la instalación de Robocop y el modo de lenguaje **Robot Framework**.
 
 ## GitHub Actions
 
-- `quality.yml`: linter, comprobación de formato, contratos Python y dry run en push y pull request.
-- `e2e.yml`: ejecución manual sobre el sitio público, con reportes y capturas como artefacto descargable. Se activa desde **Actions → ParaBank E2E → Run workflow**.
+- `quality.yml`: Robocop y dry run en push y pull request.
+- `e2e.yml`: ejecución manual con Chrome y artefacto de reportes; selecciona la rama que quieras verificar en **Actions → ParaBank E2E → Run workflow**.
 
-La ejecución real requiere navegador y acceso a ParaBank. Consulta `docs/validation.md` para conocer qué se verificó durante la preparación del ejemplo.
-
-## Extender los flujos
-
-Para un nuevo flujo, añade los localizadores en Pages, keywords de negocio en UseCases y una suite que importe Config y componga el escenario. Mantén los imports de librerías y la construcción de datos fuera de los flujos. No añadas lógica de Selenium a las clases POM.
+La validación del proyecto usa Robot Framework y Robocop. Consulta [docs/validation.md](docs/validation.md) para conocer los resultados registrados.
 
 ## Fuentes
 
 - [Robot Framework User Guide](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html)
+- [Robot Framework Style Guide](https://docs.robotframework.org/docs/style_guide)
 - [SeleniumLibrary](https://robotframework.org/SeleniumLibrary/SeleniumLibrary.html)
 - [DataDriver](https://github.com/Snooz82/robotframework-datadriver)
 - [PyTabify](https://github.com/angel-valdezzz/pytabify)

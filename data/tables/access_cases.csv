@@ -1,0 +1,4 @@
+access_case_id,username,password,expected_message
+empty_username,,DemoRf123!,Please enter a username and password.
+empty_password,rf_missing_user,,Please enter a username and password.
+empty_credentials,,,Please enter a username and password.

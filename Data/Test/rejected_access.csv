@@ -1,4 +1,0 @@
-*** Test Cases ***,${username},${password},${expected_message},[Tags]
-Usuario vacío,,DemoRf123!,Please enter a username and password.,required
-Contraseña vacía,rf_missing_user,,Please enter a username and password.,required
-Credenciales vacías,,,Please enter a username and password.,required
