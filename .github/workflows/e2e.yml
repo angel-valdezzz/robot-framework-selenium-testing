@@ -19,7 +19,21 @@ jobs:
       - run: robot --outputdir results tests
       - name: Generar reportes de negocio
         if: always()
-        run: rf-evidence build results/evidence --output results/business-reports
+        run: rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
+      - name: Verificar formatos y manifiesto
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('results/business-reports')
+          manifest = json.loads((root / 'manifest.json').read_text())
+          assert manifest['cases'], 'No se generaron reportes'
+          for case in manifest['cases']:
+              reports = [item for item in case['files'] if item['type'] in {'html', 'pdf', 'docx'}]
+              assert {item['type'] for item in reports} == {'html', 'pdf', 'docx'}
+              assert all((root / item['path']).stat().st_size > 0 for item in reports)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
