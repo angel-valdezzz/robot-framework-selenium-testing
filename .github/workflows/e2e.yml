@@ -1,7 +1,7 @@
 name: ParaBank E2E
 on:
   push:
-    branches: [main, feature/evidence-reporter]
+    branches: [main, "feature/**"]
     paths: ["tests/**", "config/**", "use_cases/**", "poetry.lock", ".github/workflows/e2e.yml"]
   workflow_dispatch:
 permissions:

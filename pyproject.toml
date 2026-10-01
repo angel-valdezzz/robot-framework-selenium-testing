@@ -12,7 +12,7 @@ robotframework-seleniumlibrary = "6.9.0"
 robotframework-datadriver = "1.11.2"
 pytabify = "3.0.0"
 robotframework-faker = "^6.0.0"
-robotframework-evidence-reporter = {git = "https://github.com/angel-valdezzz/robotframework-evidence-reporter.git", rev = "ad7d2bd2d5c4a3c05a1238399d3e7c1ea8290f0b"}
+robotframework-evidence-reporter = {git = "https://github.com/angel-valdezzz/robotframework-evidence-reporter.git", rev = "c52e2e0e050358a2a8135529b5edb16af8bb68c0"}
 
 [tool.poetry.group.dev.dependencies]
 robotframework-robocop = "9.1.0"

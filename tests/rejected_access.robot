@@ -25,5 +25,5 @@ Rechazar Acceso Del Cliente
     ${data_table}=    Cargar Datos De Acceso    ${row_index}
     Set Report Metadata    Aplicación=ParaBank    Ambiente=Demo público    Fila=${row_index}
     Validar Rechazo De Acceso    ${data_table}
-    Capture Element Evidence    ${LOGIN_PAGE.error}    Motivo de rechazo
-    Capture Page Evidence    Acceso rechazado
+    Capture Element Evidence    ${LOGIN_PAGE.error}    Motivo de rechazo    status=PASS
+    Capture Page Evidence    Acceso rechazado    status=PASS
