@@ -788,8 +788,8 @@ robotframework = ">=7.0,<8.0"
 [package.source]
 type = "git"
 url = "https://github.com/angel-valdezzz/robotframework-evidence-reporter.git"
-reference = "ad7d2bd2d5c4a3c05a1238399d3e7c1ea8290f0b"
-resolved_reference = "ad7d2bd2d5c4a3c05a1238399d3e7c1ea8290f0b"
+reference = "c52e2e0e050358a2a8135529b5edb16af8bb68c0"
+resolved_reference = "c52e2e0e050358a2a8135529b5edb16af8bb68c0"
 
 [[package]]
 name = "robotframework-faker"
@@ -1183,4 +1183,4 @@ h11 = ">=0.16.0,<1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.15"
-content-hash = "951920ac63054619095c492e38194b09b1111219ac45e795a1d170b4e216b898"
+content-hash = "617f1394bb1f961efebc9cede497023be49dac5e59c374a0bfb3f2e74a576d8d"
