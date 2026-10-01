@@ -1,0 +1,10 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+  "robotcode.robocop.enabled": true,
+  "[robotframework]": {
+    "editor.defaultFormatter": "d-biehl.robotcode",
+    "editor.formatOnSave": true
+  },
+  "files.encoding": "utf8",
+  "files.trimTrailingWhitespace": true
+}

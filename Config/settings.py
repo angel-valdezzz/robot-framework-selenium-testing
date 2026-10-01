@@ -1,0 +1,6 @@
+"""Valores por defecto. Robot --variable tiene prioridad sobre este archivo."""
+BASE_URL = "https://parabank.parasoft.com/parabank/"
+BROWSER = "headlesschrome"
+TIMEOUT = "15 seconds"
+SELENIUM_SPEED = "0 seconds"
+BROWSER_OPTIONS = ""

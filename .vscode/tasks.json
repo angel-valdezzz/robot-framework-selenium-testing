@@ -1,0 +1,5 @@
+{"version":"2.0.0","tasks":[
+{"label":"Robot: ejecutar","type":"shell","command":"poetry run robot --outputdir results Tests","group":{"kind":"test","isDefault":true},"problemMatcher":[]},
+{"label":"Robocop: revisar","type":"shell","command":"poetry run robocop check Tests UseCases Config","problemMatcher":[]},
+{"label":"Robocop: formatear","type":"shell","command":"poetry run robocop format Tests UseCases Config","problemMatcher":[]}
+]}
