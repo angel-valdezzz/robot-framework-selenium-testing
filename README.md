@@ -51,11 +51,11 @@ El estilo inspirado en BDD se refleja en los nombres y la intención de negocio.
 ```robotframework
 Registrar Cliente Y Consultar Sus Cuentas
     [Arguments]    ${row_index}
-    ${customer}=    Cargar Datos Del Cliente    ${row_index}
-    Registrar Cliente    ${customer}
+    ${data_table}=    Cargar Datos Del Cliente    ${row_index}
+    Registrar Cliente    ${data_table}
     Cerrar Sesión
-    Iniciar Sesión    ${customer}
-    Consultar Cuentas Del Cliente    ${customer}
+    Iniciar Sesión    ${data_table}
+    Consultar Cuentas Del Cliente    ${data_table}
     Cerrar Sesión
 ```
 
@@ -105,13 +105,13 @@ PyTabify carga **los datos de cada caso** desde `data/tables`. Los índices comi
 
 ```robotframework
 ${table}=    Create Data Table From File    ${EXECDIR}/data/tables/customers.csv
-VAR    ${customer}=    ${table}[${row_index}]
-${customer.username}=    Bothify    text=rf_?????????????????    letters=0123456789abcdef
+VAR    ${data_table}=    ${table}[${row_index}]
+${data_table.username}=    Bothify    text=rf_?????????????????    letters=0123456789abcdef
 ```
 
 PyTabify se importa sin alias. FakerLibrary usa `locale=es_MX`; `Bothify` crea el usuario ficticio de 20 caracteres para reducir colisiones en el demo compartido. Los datos personales siguen definidos explícitamente en el CSV. No se buscan identificadores ni se recorren las filas.
 
-Robot permite asignar directamente `${customer.username}`. En PyTabify 3.0, esa asignación prepara el atributo de la fila devuelta; no actualiza el contenido de la tabla ni su CSV. Los casos de uso reciben esa misma fila y acceden a sus atributos, como `${customer.first_name}`. Si se necesita modificar la tabla original, PyTabify ofrece `Set Data Table Value`.
+Robot permite asignar directamente `${data_table.username}`. En PyTabify 3.0, esa asignación prepara el atributo de la fila devuelta; no actualiza el contenido de la tabla ni su CSV. Los casos de uso reciben esa misma fila y acceden a sus atributos, como `${data_table.first_name}`. Si se necesita modificar la tabla original, PyTabify ofrece `Set Data Table Value`.
 
 El CSV conserva texto, incluyendo el código postal `01000` y las credenciales vacías. Un índice fuera de rango produce un error de carga.
 
@@ -205,3 +205,18 @@ La validación del proyecto usa Robot Framework y Robocop. Consulta [docs/valida
 - [RobotCode](https://github.com/robotcodedev/robotcode)
 - [FakerLibrary](https://github.com/gunthercox/robotframework-faker)
 - [Faker: locale es_MX](https://faker.readthedocs.io/en/master/locales/es_MX.html)
+
+## Reportes individuales de negocio
+
+Las suites importan `config/evidence.resource` y registran evidencias explícitas: página visible y elementos. Los casos de uso conservan sus keywords de negocio. Cada caso recibe `${data_table}`, la fila seleccionada de PyTabify.
+
+```bash
+poetry run robot --outputdir results tests
+poetry run rf-evidence build results/evidence --output results/business-reports
+```
+
+Se genera un HTML autocontenido por caso, con estado final, tiempos, metadatos, hitos opcionales y capturas. Las capturas fallidas advierten por defecto sin cambiar el resultado del caso. El workflow E2E genera los HTML también si Robot falla y los incluye en el artefacto `parabank-results`.
+
+La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). Mientras se completa su primera publicación en PyPI, Poetry instala un commit fijo de ese repositorio; el lock conserva la revisión exacta. No se copia el código de la librería dentro del framework.
+
+Utiliza una carpeta de resultados nueva por ejecución o elimina los resultados anteriores antes de iniciar: el generador incluye todos los JSON encontrados.

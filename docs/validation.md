@@ -25,3 +25,17 @@ La comprobación local de preparación de datos se ejecutó con Robot usando un 
 La refactorización cambia los nombres de carpetas a `snake_case`, compone casos de uso completos, importa instancias POM declarativas en mayúsculas y prepara los datos con PyTabify desde Robot, seleccionando filas por índice y generando usuarios con FakerLibrary (`es_MX`). La asignación directa modifica el atributo de la fila usada en el flujo; no reescribe la tabla ni el CSV. Todas las rutas de archivos en Robot se resuelven desde `${EXECDIR}`; se ejecuta desde la raíz del proyecto.
 
 El entorno local de preparación restringe los sockets de Chrome. La comprobación E2E se completó en un runner de GitHub Actions. ParaBank es un demo compartido: su disponibilidad y los reinicios de sus datos pueden afectar ejecuciones futuras.
+
+## Integración de Evidence Reporter
+
+El 1 de octubre de 2026, [ParaBank E2E](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36911478133) validó el commit `70ce7447db3fde292ad744c4f486c286c721a37a`:
+
+- Cinco casos con Chrome, cinco aprobados.
+- Cinco HTML individuales autocontenidos, generados después de Robot.
+- Catorce capturas incrustadas: cuatro por escenario de registro y dos por escenario de rechazo.
+- Ninguna advertencia de captura.
+- Robocop y dry run aprobados en el workflow Quality.
+
+El artefacto `parabank-results` conserva los JSON, imágenes, reportes técnicos y HTML de negocio. Se inspeccionaron los JSON y HTML descargados para confirmar estados, número de reportes y capturas incrustadas.
+
+La librería se instala desde un commit Git fijo mientras se completa la publicación inicial en PyPI. El navegador de autenticación no respondió durante esa publicación; no se solicitó el token temporal ni se completó la confirmación por correo.

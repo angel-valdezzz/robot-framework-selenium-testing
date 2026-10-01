@@ -11,14 +11,14 @@ Cargar Datos Del Cliente
     [Arguments]    ${row_index}
     ${row_index}=    Convert To Integer    ${row_index}
     ${table}=    Create Data Table From File    ${EXECDIR}/data/tables/customers.csv
-    VAR    ${customer}=    ${table}[${row_index}]
-    ${customer.username}=    Bothify    text=rf_?????????????????    letters=0123456789abcdef
-    RETURN    ${customer}
+    VAR    ${data_table}=    ${table}[${row_index}]
+    ${data_table.username}=    Bothify    text=rf_?????????????????    letters=0123456789abcdef
+    RETURN    ${data_table}
 
 Cargar Datos De Acceso
     [Documentation]    Obtiene por índice las credenciales y el resultado esperado.
     [Arguments]    ${row_index}
     ${row_index}=    Convert To Integer    ${row_index}
     ${table}=    Create Data Table From File    ${EXECDIR}/data/tables/access_cases.csv
-    VAR    ${access}=    ${table}[${row_index}]
-    RETURN    ${access}
+    VAR    ${data_table}=    ${table}[${row_index}]
+    RETURN    ${data_table}

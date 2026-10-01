@@ -2,6 +2,7 @@
 Documentation    Cada fila identifica un caso de rechazo con sus datos separados del escenario.
 
 Resource         ${EXECDIR}/config/browser.resource
+Resource         ${EXECDIR}/config/evidence.resource
 Resource         ${EXECDIR}/config/test_data.resource
 Resource         ${EXECDIR}/use_cases/customer_access.resource
 Library          DataDriver    file=${EXECDIR}/data/test/rejected_access.csv    dialect=excel    encoding=utf-8
@@ -21,5 +22,8 @@ Acceso rechazado    row_index
 Rechazar Acceso Del Cliente
     [Documentation]    Carga la fila de acceso y ejecuta el caso de uso de rechazo.
     [Arguments]    ${row_index}
-    ${access}=    Cargar Datos De Acceso    ${row_index}
-    Validar Rechazo De Acceso    ${access}
+    ${data_table}=    Cargar Datos De Acceso    ${row_index}
+    Set Report Metadata    Aplicación=ParaBank    Ambiente=Demo público    Fila=${row_index}
+    Validar Rechazo De Acceso    ${data_table}
+    Capture Element Evidence    ${LOGIN_PAGE.error}    Motivo de rechazo
+    Capture Page Evidence    Acceso rechazado
