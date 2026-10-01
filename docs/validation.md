@@ -39,3 +39,7 @@ El 1 de octubre de 2026, [ParaBank E2E](https://github.com/angel-valdezzz/robot-
 El artefacto `parabank-results` conserva los JSON, imágenes, reportes técnicos y HTML de negocio. Se inspeccionaron los JSON y HTML descargados para confirmar estados, número de reportes y capturas incrustadas.
 
 La librería se instala desde un commit Git fijo mientras se completa la publicación inicial en PyPI. El navegador de autenticación no respondió durante esa publicación; no se solicitó el token temporal ni se completó la confirmación por correo.
+
+## Instalación desde PyPI
+
+La configuración actual usa Evidence Reporter 0.1.0 desde PyPI e importa `Library    EvidenceReporter`. Ambos workflows instalan con `python -m pip install -r requirements.txt`; Poetry queda como alternativa con el lock actualizado.
