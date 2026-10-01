@@ -1,3 +1,3 @@
-*** Test Cases ***,${customer_id},[Tags],[Documentation]
-Cliente de México se registra y consulta sus cuentas,customer_mx,mexico,Alta y acceso con datos sintéticos de México
-Cliente de Estados Unidos se registra y consulta sus cuentas,customer_us,usa,Alta y acceso con datos sintéticos de Estados Unidos
+*** Test Cases ***,${row_index},[Tags],[Documentation]
+Cliente de México se registra y consulta sus cuentas,0,mexico,Alta y acceso con datos sintéticos de México
+Cliente de Estados Unidos se registra y consulta sus cuentas,1,usa,Alta y acceso con datos sintéticos de Estados Unidos

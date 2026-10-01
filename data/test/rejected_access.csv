@@ -1,4 +1,4 @@
-*** Test Cases ***,${access_case_id},[Tags]
-Usuario vacío,empty_username,required
-Contraseña vacía,empty_password,required
-Credenciales vacías,empty_credentials,required
+*** Test Cases ***,${row_index},[Tags]
+Usuario vacío,0,required
+Contraseña vacía,1,required
+Credenciales vacías,2,required

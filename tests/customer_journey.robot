@@ -15,14 +15,14 @@ Test Tags        e2e    customer    smoke
 
 
 *** Test Cases ***
-Cliente ${customer_id} puede registrarse y consultar sus cuentas    customer_id
+Cliente ${row_index} puede registrarse y consultar sus cuentas    row_index
 
 
 *** Keywords ***
 Registrar Cliente Y Consultar Sus Cuentas
     [Documentation]    Prepara la fila de datos y ejecuta registro, acceso, consulta y cierre.
-    [Arguments]    ${customer_id}
-    ${customer}=    Cargar Datos Del Cliente    ${customer_id}
+    [Arguments]    ${row_index}
+    ${customer}=    Cargar Datos Del Cliente    ${row_index}
     Registrar Cliente    ${customer}
     Cerrar Sesión
     Iniciar Sesión    ${customer}

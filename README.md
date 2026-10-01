@@ -14,6 +14,7 @@ Aplicación: https://parabank.parasoft.com/parabank/
 | SeleniumLibrary | 6.9.0 | Interacción con el navegador |
 | DataDriver | 1.11.2 | Un caso ejecutable por fila de la matriz CSV |
 | PyTabify (`pytabify`) | 3.0.0 | Carga y preparación de tablas desde Robot |
+| FakerLibrary | 6.0.0 | Datos ficticios con Faker y locale `es_MX` |
 | Robocop | 9.1.0 | Linter y formatter |
 | RobotCode | Extensión VS Code | Análisis, ejecución y formato al guardar |
 
@@ -27,7 +28,7 @@ Aplicación: https://parabank.parasoft.com/parabank/
 | `use_cases/` | Flujos completos de negocio y verificaciones de su resultado |
 | `pages/` | Clases Python declarativas e instancias con localizadores |
 | `config/` | Configuración, ciclo de vida del navegador y carga de tablas |
-| `data/test/` | Matrices DataDriver: nombre del caso, identificador y tags |
+| `data/test/` | Matrices DataDriver: nombre del caso, índice de fila y tags |
 | `data/tables/` | Datos de entrada y resultados esperados de cada caso |
 | `docs/` | Evidencia y alcance de la validación |
 
@@ -49,8 +50,8 @@ El estilo inspirado en BDD se refleja en los nombres y la intención de negocio.
 
 ```robotframework
 Registrar Cliente Y Consultar Sus Cuentas
-    [Arguments]    ${customer_id}
-    ${customer}=    Cargar Datos Del Cliente    ${customer_id}
+    [Arguments]    ${row_index}
+    ${customer}=    Cargar Datos Del Cliente    ${row_index}
     Registrar Cliente    ${customer}
     Cerrar Sesión
     Iniciar Sesión    ${customer}
@@ -87,7 +88,7 @@ No hacen falta decoradores, `__init__`, `get_variables()` ni `__all__` para esta
 
 - `config/settings.py`: URL, navegador, timeout, velocidad y opciones.
 - `config/browser.resource`: SeleniumLibrary, apertura y cierre del navegador.
-- `config/test_data.resource`: PyTabify, selección de filas por identificador y usuario único.
+- `config/test_data.resource`: PyTabify, selección de filas por índice y Faker con locale `es_MX`.
 
 La preparación de datos se implementa en Robot usando la librería oficial `pytabify.robot.PyTabifyLibrary`.
 
@@ -96,19 +97,29 @@ La preparación de datos se implementa en Robot usando la librería oficial `pyt
 DataDriver decide **qué casos ejecutar**. Su matriz contiene referencias a los datos:
 
 ```csv
-*** Test Cases ***,${customer_id},[Tags]
-Cliente de México,customer_mx,mexico
+*** Test Cases ***,${row_index},[Tags]
+Cliente de México,0,mexico
 ```
 
-PyTabify carga **los datos de cada caso** desde `data/tables`. `Cargar Datos Del Cliente` busca una sola coincidencia por `customer_id`, genera un usuario de 20 caracteres con prefijo `rf_` y devuelve la fila. `Cargar Datos De Acceso` obtiene credenciales y mensaje esperado usando `access_case_id`.
+PyTabify carga **los datos de cada caso** desde `data/tables`. Los índices comienzan en **0** y corresponden al orden de las filas, sin contar la cabecera. La matriz DataDriver pasa `${row_index}`; se convierte a entero antes de acceder a la tabla:
 
-Los casos de uso reciben la fila correspondiente y acceden a `${customer.first_name}` o `${access.expected_message}` directamente. El CSV conserva texto, incluyendo el código postal `01000`. Las tablas originales no se reescriben durante las pruebas.
+```robotframework
+${table}=    Create Data Table From File    ${EXECDIR}/data/tables/customers.csv
+VAR    ${customer}=    ${table}[${row_index}]
+${customer.username}=    Bothify    text=rf_?????????????????    letters=0123456789abcdef
+```
+
+PyTabify se importa sin alias. FakerLibrary usa `locale=es_MX`; `Bothify` crea el usuario ficticio de 20 caracteres para reducir colisiones en el demo compartido. Los datos personales siguen definidos explícitamente en el CSV. No se buscan identificadores ni se recorren las filas.
+
+Robot permite asignar directamente `${customer.username}`. En PyTabify 3.0, esa asignación prepara el atributo de la fila devuelta; no actualiza el contenido de la tabla ni su CSV. Los casos de uso reciben esa misma fila y acceden a sus atributos, como `${customer.first_name}`. Si se necesita modificar la tabla original, PyTabify ofrece `Set Data Table Value`.
+
+El CSV conserva texto, incluyendo el código postal `01000` y las credenciales vacías. Un índice fuera de rango produce un error de carga.
 
 Para agregar una variación:
 
-1. Añade una fila con identificador único en `data/tables/customers.csv` o `data/tables/access_cases.csv`.
-2. Añade ese identificador en la matriz correspondiente de `data/test`.
-3. Ejecuta la suite; DataDriver genera el caso y PyTabify prepara sus datos.
+1. Añade una fila en `data/tables/customers.csv` o `data/tables/access_cases.csv`.
+2. Añade su índice en la matriz correspondiente de `data/test`.
+3. Ejecuta la suite; DataDriver genera el caso y PyTabify prepara sus datos. Si reordenas una tabla, actualiza los índices de su matriz.
 
 ## Instalación y directorio de ejecución
 
@@ -192,3 +203,5 @@ La validación del proyecto usa Robot Framework y Robocop. Consulta [docs/valida
 - [PyTabify](https://github.com/angel-valdezzz/pytabify)
 - [Robocop](https://robocop.dev/)
 - [RobotCode](https://github.com/robotcodedev/robotcode)
+- [FakerLibrary](https://github.com/gunthercox/robotframework-faker)
+- [Faker: locale es_MX](https://faker.readthedocs.io/en/master/locales/es_MX.html)

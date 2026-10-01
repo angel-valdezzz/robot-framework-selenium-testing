@@ -14,12 +14,12 @@ Test Tags        e2e    authentication    negative
 
 
 *** Test Cases ***
-Acceso rechazado    access_case_id
+Acceso rechazado    row_index
 
 
 *** Keywords ***
 Rechazar Acceso Del Cliente
     [Documentation]    Carga la fila de acceso y ejecuta el caso de uso de rechazo.
-    [Arguments]    ${access_case_id}
-    ${access}=    Cargar Datos De Acceso    ${access_case_id}
+    [Arguments]    ${row_index}
+    ${access}=    Cargar Datos De Acceso    ${row_index}
     Validar Rechazo De Acceso    ${access}
