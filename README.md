@@ -268,3 +268,7 @@ También se anotan el resumen de cuentas, los rechazos esperados y el cierre de 
 ParaBank E2E ejecuta las suites en push a main, pull request y ejecución manual. Main publica la fecha, commit, estado de la ejecución y reportes HTML/PDF/Word con las anotaciones de Marka. Si un test falla pero genera evidencia válida, se publica su resultado real, sin convertirlo en PASS.
 
 Pages conserva únicamente la última publicación válida y su ZIP. El artefacto de Actions de main tiene retención de 7 días; los anteriores del mismo workflow se eliminan después de publicar el nuevo. Los PR conservan su artefacto 1 día y no publican. Si no hay reportes válidos, la página anterior sigue disponible. Los reportes no se incorporan al historial Git. Se usan datos ficticios del demo público.
+
+## Diseño técnico
+
+[Arquitectura, flujo de ejecución y publicación](docs/architecture.md): diagramas de las capas, datos, evidencia, limpieza y CI, con referencias a las rutas reales del proyecto.
