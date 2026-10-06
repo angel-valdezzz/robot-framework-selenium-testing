@@ -42,6 +42,13 @@ La librería se instala desde un commit Git fijo mientras se completa la publica
 
 ## Instalación desde PyPI
 
-La configuración actual usa Evidence Reporter 0.2.0 desde PyPI e importa `Library    EvidenceReporter`. Ambos workflows instalan con `python -m pip install -r requirements.txt`; Poetry queda como alternativa con el lock actualizado.
+La configuración actual usa Evidence Reporter 0.3.0 desde PyPI e importa `Library    EvidenceReporter`. Ambos workflows instalan con `python -m pip install -r requirements.txt`; Poetry queda como alternativa con el lock actualizado.
 
 La ampliación genera HTML, PDF y DOCX por caso, junto con manifest.json, en el artefacto parabank-results.
+
+
+## Ampliación de recorridos bancarios
+
+La suite incorpora ocho casos: los cinco anteriores y tres recorridos independientes de registro/cierre, apertura de ahorro y transferencia con comprobación exacta de saldos y movimientos. Robocop y dry-run validan la estructura.
+
+En [la ejecución del PR #7](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/37418563210), cuatro casos pasaron y cuatro fallaron al cargar el resumen de cuentas después del login, antes de ejecutar las nuevas operaciones bancarias. Se generaron y verificaron ocho reportes HTML/PDF/DOCX y el ZIP. La validación funcional de apertura y transferencias queda pendiente de la recuperación de ParaBank; se mantienen las assertions y los fallos reales.
