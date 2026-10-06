@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "robot-framework-selenium-testing"
+name = "robotframework-selenium-testing"
 version = "0.1.0"
 description = "ParaBank: Robot Framework, SeleniumLibrary y datos con PyTabify"
 authors = ["Angel Gerardo Molina Valdez"]
@@ -12,7 +12,7 @@ robotframework-seleniumlibrary = "6.9.0"
 robotframework-datadriver = "1.11.2"
 pytabify = "3.0.0"
 robotframework-faker = "^6.0.0"
-robotframework-evidence-reporter = "0.2.1"
+robotframework-evidence-reporter = "0.3.0"
 robotframework-marka = "0.1.0"
 
 [tool.poetry.group.dev.dependencies]

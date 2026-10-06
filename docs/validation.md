@@ -13,8 +13,8 @@ Validada el 1 de octubre de 2026 con Python 3.12 y Robot Framework 7.5.
 
 ## Evidencia de la rama refactorizada
 
-- [Quality](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36899619216): Robocop y dry run.
-- [ParaBank E2E #3](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36899775522): registro, acceso, identidad del cliente, consulta de cuentas, cierre de sesión y rechazo por campos requeridos.
+- [Quality](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/36899619216): Robocop y dry run.
+- [ParaBank E2E #3](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/36899775522): registro, acceso, identidad del cliente, consulta de cuentas, cierre de sesión y rechazo por campos requeridos.
 
 Ambas ejecuciones validan el commit `ed0c377fbbc6698ff333824a7306d22f5f0aa4f3` de `refactor/business-use-cases`. El workflow E2E publica los reportes Robot en el artefacto `parabank-results`, con retención de 7 días.
 
@@ -28,7 +28,7 @@ El entorno local de preparación restringe los sockets de Chrome. La comprobaci�
 
 ## Integración de Evidence Reporter
 
-El 1 de octubre de 2026, [ParaBank E2E](https://github.com/angel-valdezzz/robot-framework-selenium-testing/actions/runs/36911478133) validó el commit `70ce7447db3fde292ad744c4f486c286c721a37a`:
+El 1 de octubre de 2026, [ParaBank E2E](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/36911478133) validó el commit `70ce7447db3fde292ad744c4f486c286c721a37a`:
 
 - Cinco casos con Chrome, cinco aprobados.
 - Cinco HTML individuales autocontenidos, generados después de Robot.
