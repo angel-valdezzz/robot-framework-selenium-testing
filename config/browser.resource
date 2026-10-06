@@ -14,4 +14,5 @@ Abrir Navegador De Prueba
 
 Cerrar Navegador De Prueba
     [Documentation]    Cierra las sesiones aun cuando el escenario falla.
+    Run Keyword And Ignore Error    Clear Annotations
     Close All Browsers

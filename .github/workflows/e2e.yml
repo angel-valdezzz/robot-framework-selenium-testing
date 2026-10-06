@@ -1,22 +1,33 @@
 name: ParaBank E2E
 on:
   push:
-    branches: [main, "feature/**"]
-    paths: ["tests/**", "config/**", "use_cases/**", "poetry.lock", "requirements.txt", ".github/workflows/e2e.yml"]
+    branches: [main]
+  pull_request:
   workflow_dispatch:
+concurrency:
+  group: latest-reports-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:
   e2e:
+    outputs:
+      ready: ${{ steps.reports.outcome }}
+      artifact_id: ${{ steps.reports.outputs.artifact-id }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v2
       - run: python -m pip install -r requirements.txt
-      - run: robot --outputdir results tests
+      - run: python -m unittest discover -s scripts -p "test_*.py"
+      - name: Execute ParaBank scenarios
+        id: demo
+        run: robot --outputdir results tests
       - name: Generar reportes de negocio
         if: always()
         run: rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
@@ -34,9 +45,68 @@ jobs:
               assert {item['type'] for item in reports} == {'html', 'pdf', 'docx'}
               assert all((root / item['path']).stat().st_size > 0 for item in reports)
           PY
-      - uses: actions/upload-artifact@v4
+
+      - name: Prepare latest reports
+        id: site
         if: always()
+        env:
+          VALIDATION_OUTCOME: ${{ steps.demo.outcome }}
+        run: python scripts/build_latest.py --kind selenium --outcome "$VALIDATION_OUTCOME"
+      - name: Upload report bundle
+        id: reports
+        if: always() && steps.site.outcome == 'success'
+        uses: actions/upload-artifact@v4
         with:
           name: parabank-results
-          path: results/
-          retention-days: 7
+          path: report-site/
+          retention-days: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 7 || 1 }}
+          if-no-files-found: error
+      - name: Prepare Pages deployment
+        if: always() && steps.site.outcome == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: report-site/
+          retention-days: 1
+  publish:
+    if: always() && needs.e2e.outputs.ready == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: e2e
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify current main commit
+        id: fresh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$current" = "$GITHUB_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "An updated main execution will publish its reports."
+          fi
+      - name: Deploy latest reports
+        id: deployment
+        if: steps.fresh.outputs.current == 'true'
+        uses: actions/deploy-pages@v4
+      - uses: actions/setup-python@v6
+        if: steps.deployment.outcome == 'success'
+        with:
+          python-version: '3.12'
+      - name: Retain only current main report bundle
+        if: steps.deployment.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CURRENT_ARTIFACT_ID: ${{ needs.e2e.outputs.artifact_id }}
+          REPORT_ARTIFACT_NAMES: parabank-results
+        run: python scripts/retain_latest.py
+      - name: Link published reports
+        if: steps.deployment.outcome == 'success'
+        run: echo "[Última ejecución y ZIP](${{ steps.deployment.outputs.page_url }})" >> "$GITHUB_STEP_SUMMARY"

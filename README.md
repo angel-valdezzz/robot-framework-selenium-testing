@@ -14,7 +14,7 @@ robot --outputdir results tests
 rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
 ```
 
-Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.2.0`. Poetry se conserva como alternativa.
+Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.2.1`. Poetry se conserva como alternativa.
 
 ## Tecnologías
 
@@ -27,7 +27,8 @@ Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence
 | DataDriver | 1.11.2 | Un caso ejecutable por fila de la matriz CSV |
 | PyTabify (`pytabify`) | 3.0.0 | Carga y preparación de tablas desde Robot |
 | FakerLibrary | 6.0.0 | Datos ficticios con Faker y locale `es_MX` |
-| Evidence Reporter | 0.2.0 | HTML PDF Word y manifiesto de evidencias |
+| Evidence Reporter | 0.2.1 | HTML PDF Word y manifiesto de evidencias |
+| Marka | 0.1.0 | Highlights, dots numerados, etiquetas y notas para capturas |
 | Robocop | 9.1.0 | Linter y formatter |
 | RobotCode | Extensión VS Code | Análisis, ejecución y formato al guardar |
 
@@ -203,7 +204,7 @@ Las tareas del editor ejecutan Robot y Robocop con `${workspaceFolder}` como dir
 ## GitHub Actions
 
 - `quality.yml`: Robocop y dry run en push y pull request.
-- `e2e.yml`: ejecución manual con Chrome y artefacto de reportes; selecciona la rama que quieras verificar en **Actions → ParaBank E2E → Run workflow**.
+- `e2e.yml`: ejecuta Chrome en push a main, pull requests y manualmente desde **Actions → ParaBank E2E → Run workflow**. Main publica los últimos reportes en Pages; los PR solo validan y adjuntan artefactos.
 
 La validación del proyecto usa Robot Framework y Robocop. Consulta [docs/validation.md](docs/validation.md) para conocer los resultados registrados.
 
@@ -230,6 +231,32 @@ poetry run rf-evidence build results/evidence --output results/business-reports 
 
 Se genera un HTML autocontenido por caso, con estado final, tiempos, metadatos, hitos opcionales y capturas. Las capturas fallidas advierten por defecto sin cambiar el resultado del caso. El workflow E2E genera los HTML también si Robot falla y los incluye en el artefacto `parabank-results`.
 
-La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.2.0 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
+La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.2.1 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
 
 Utiliza una carpeta de resultados nueva por ejecución o elimina los resultados anteriores antes de iniciar: el generador incluye todos los JSON encontrados.
+
+## Marka en las evidencias
+
+Las suites importan `Library    Marka` desde `config/evidence.resource`. El navegador pertenece a SeleniumLibrary; Marka añade anotaciones sobre los elementos y Evidence Reporter captura la página anotada.
+
+```robotframework
+Highlight Element    ${REGISTRATION_PAGE.confirmation}    color=coral    group=registration
+Add Dot    ${REGISTRATION_PAGE.confirmation}    text=1    position=left    group=registration
+Add Label    ${REGISTRATION_PAGE.confirmation}    text=Alta confirmada    position=bottom    group=registration
+Add Note    ${ACCOUNTS_PAGE.logout}    text=El cliente ya tiene acceso    position=left    group=registration
+TRY
+    Capture Page Evidence    Alta confirmada    milestone_id=${milestone}    status=PASS
+FINALLY
+    Clear Annotations    group=registration
+END
+```
+
+También se anotan el resumen de cuentas, los rechazos esperados y el cierre de sesión. La captura de página conserva dots y textos que pueden quedar fuera de un recorte de elemento. La limpieza en FINALLY y teardown evita que las marcas se filtren a otra captura o caso.
+
+## Última ejecución publicada
+
+[Abrir últimos reportes](https://angel-valdezzz.github.io/robot-framework-selenium-testing/) · [Descargar ZIP](https://angel-valdezzz.github.io/robot-framework-selenium-testing/reports.zip)
+
+ParaBank E2E ejecuta las suites en push a main, pull request y ejecución manual. Main publica la fecha, commit, estado de la ejecución y reportes HTML/PDF/Word con las anotaciones de Marka. Si un test falla pero genera evidencia válida, se publica su resultado real, sin convertirlo en PASS.
+
+Pages conserva únicamente la última publicación válida y su ZIP. El artefacto de Actions de main tiene retención de 7 días; los anteriores del mismo workflow se eliminan después de publicar el nuevo. Los PR conservan su artefacto 1 día y no publican. Si no hay reportes válidos, la página anterior sigue disponible. Los reportes no se incorporan al historial Git. Se usan datos ficticios del demo público.
