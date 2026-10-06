@@ -3,6 +3,6 @@ robotframework-seleniumlibrary==6.9.0
 robotframework-datadriver==1.11.2
 pytabify==3.0.0
 robotframework-faker==6.0.0
-robotframework-evidence-reporter==0.3.0
+robotframework-evidence-reporter==0.3.1
 robotframework-robocop==9.1.0
 robotframework-marka==0.1.0
