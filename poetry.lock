@@ -1185,14 +1185,14 @@ xls = ["openpyxl", "pandas", "xlrd (>=1.2.0)"]
 
 [[package]]
 name = "robotframework-evidence-reporter"
-version = "0.2.0"
+version = "0.2.1"
 description = "Standalone business evidence reports per Robot Framework test"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "robotframework_evidence_reporter-0.2.0-py3-none-any.whl", hash = "sha256:edda0bb03d3ada57dc92402a8a5f2aa02db601d866bef88bb77b9c48dc83470c"},
-    {file = "robotframework_evidence_reporter-0.2.0.tar.gz", hash = "sha256:e8b292a2fb671dac4fa0347e8652560f0afc0fc8b1f6378adda9bb9c6bdec0cd"},
+    {file = "robotframework_evidence_reporter-0.2.1-py3-none-any.whl", hash = "sha256:0e1555250c07437319fc394975deb6c0ec1b042bdb8974eecf7f4255d1001702"},
+    {file = "robotframework_evidence_reporter-0.2.1.tar.gz", hash = "sha256:9b6e98d71de9ab082cd9c53d1635725d5d63e154f3b28a0a30bb0cb492e69ef0"},
 ]
 
 [package.dependencies]
@@ -1218,6 +1218,25 @@ files = [
 faker = "*"
 robotframework = "*"
 wrapt = "*"
+
+[[package]]
+name = "robotframework-marka"
+version = "0.1.0"
+description = "Marka: persistent highlights and screenshot annotations for Selenium."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "robotframework_marka-0.1.0-py3-none-any.whl", hash = "sha256:b9993236cfcf52876348a097bf5aa7cd6368ad2c1d26c2ab8ef0448d8c4bdf18"},
+    {file = "robotframework_marka-0.1.0.tar.gz", hash = "sha256:1b9b468e90b12effc89c97e25f62d2dd0c304d9f809f41f7548dc9c3c5b7c770"},
+]
+
+[package.dependencies]
+selenium = ">=4.20,<5"
+
+[package.extras]
+dev = ["mkdocs-git-revision-date-localized-plugin (>=1.5,<2)", "mkdocs-material (>=9.7,<10)", "pygments (>=2.19,<3)", "pytest (>=8,<10)", "pytest-cov (>=6,<8)", "ruff (>=0.15,<0.16)", "twine (>=6,<7)"]
+robot = ["robotframework (>=7,<8)", "robotframework-seleniumlibrary (>=6.7,<7)"]
 
 [[package]]
 name = "robotframework-pythonlibcore"
@@ -1594,4 +1613,4 @@ h11 = ">=0.16.0,<1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.15"
-content-hash = "2a34cd4196bdf5fd06cdcb2454a90f8509f2fab4395b10a2a942578d92efae15"
+content-hash = "6083ef86eaaa5fcb3a7f44731d012120845aaeda72abfffa5c6670c2053d3dda"
