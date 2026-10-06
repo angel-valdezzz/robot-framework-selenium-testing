@@ -14,7 +14,9 @@ robot --outputdir results tests
 rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
 ```
 
-Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.2.1`. Poetry se conserva como alternativa.
+Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.3.0`. Poetry se conserva como alternativa.
+
+La interfaz de los reportes está en inglés por defecto. Usa `rf-evidence build results/evidence --output results/business-reports-es --formats html pdf docx --language es` para generar la versión en español a partir de las mismas evidencias.
 
 ## Tecnologías
 
@@ -27,7 +29,7 @@ Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence
 | DataDriver | 1.11.2 | Un caso ejecutable por fila de la matriz CSV |
 | PyTabify (`pytabify`) | 3.0.0 | Carga y preparación de tablas desde Robot |
 | FakerLibrary | 6.0.0 | Datos ficticios con Faker y locale `es_MX` |
-| Evidence Reporter | 0.2.1 | HTML PDF Word y manifiesto de evidencias |
+| Evidence Reporter | 0.3.0 | HTML PDF Word y manifiesto de evidencias |
 | Marka | 0.1.0 | Highlights, dots numerados, etiquetas y notas para capturas |
 | Robocop | 9.1.0 | Linter y formatter |
 | RobotCode | Extensión VS Code | Análisis, ejecución y formato al guardar |
@@ -74,6 +76,12 @@ Registrar Cliente Y Consultar Sus Cuentas
 ```
 
 Los auxiliares dentro de los recursos, como `Completar Información Personal`, reducen el detalle técnico del flujo principal y llevan el tag `robot:private`. Robot avisa si se usan desde otro archivo; no es una barrera de acceso de Python.
+
+## Recorridos bancarios adicionales
+
+Tres escenarios independientes amplían la suite a ocho casos: registro y cierre de sesión; registro, acceso y apertura de una cuenta de ahorro; y transferencia entre cuentas con verificación de ambos saldos y movimientos. Marka señala los campos y resultados en las capturas.
+
+Los ocho recorridos pasaron con Chrome en [GitHub Actions](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/37439421904), tras recuperarse ParaBank. Robocop y dry-run también pasaron; el banco sigue siendo un demo compartido sujeto a interrupciones.
 
 ## Pages como variables Python
 
@@ -138,8 +146,8 @@ Para agregar una variación:
 ## Instalación y directorio de ejecución
 
 ```bash
-git clone https://github.com/angel-valdezzz/robot-framework-selenium-testing.git
-cd robot-framework-selenium-testing
+git clone https://github.com/angel-valdezzz/robotframework-selenium-testing.git
+cd robotframework-selenium-testing
 python -m pip install poetry==2.5.1
 poetry install
 ```
@@ -231,7 +239,7 @@ poetry run rf-evidence build results/evidence --output results/business-reports 
 
 Se genera un HTML autocontenido por caso, con estado final, tiempos, metadatos, hitos opcionales y capturas. Las capturas fallidas advierten por defecto sin cambiar el resultado del caso. El workflow E2E genera los HTML también si Robot falla y los incluye en el artefacto `parabank-results`.
 
-La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.2.1 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
+La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.3.0 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
 
 Utiliza una carpeta de resultados nueva por ejecución o elimina los resultados anteriores antes de iniciar: el generador incluye todos los JSON encontrados.
 
@@ -255,7 +263,7 @@ También se anotan el resumen de cuentas, los rechazos esperados y el cierre de 
 
 ## Última ejecución publicada
 
-[Abrir últimos reportes](https://angel-valdezzz.github.io/robot-framework-selenium-testing/) · [Descargar ZIP](https://angel-valdezzz.github.io/robot-framework-selenium-testing/reports.zip)
+[Abrir últimos reportes](https://angel-valdezzz.github.io/robotframework-selenium-testing/) · [Descargar ZIP](https://angel-valdezzz.github.io/robotframework-selenium-testing/reports.zip)
 
 ParaBank E2E ejecuta las suites en push a main, pull request y ejecución manual. Main publica la fecha, commit, estado de la ejecución y reportes HTML/PDF/Word con las anotaciones de Marka. Si un test falla pero genera evidencia válida, se publica su resultado real, sin convertirlo en PASS.
 
