@@ -32,6 +32,7 @@ jobs:
         if: always()
         run: rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
       - name: Verificar formatos y manifiesto
+        id: formats
         if: always()
         run: |
           python - <<'PY'
@@ -48,7 +49,7 @@ jobs:
 
       - name: Prepare latest reports
         id: site
-        if: always()
+        if: always() && steps.formats.outcome == 'success'
         env:
           VALIDATION_OUTCOME: ${{ steps.demo.outcome }}
         run: python scripts/build_latest.py --kind selenium --outcome "$VALIDATION_OUTCOME"
