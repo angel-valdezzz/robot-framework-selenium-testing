@@ -1185,14 +1185,14 @@ xls = ["openpyxl", "pandas", "xlrd (>=1.2.0)"]
 
 [[package]]
 name = "robotframework-evidence-reporter"
-version = "0.3.1"
+version = "0.4.0"
 description = "Standalone business evidence reports per Robot Framework test"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "robotframework_evidence_reporter-0.3.1-py3-none-any.whl", hash = "sha256:79944c92c4139d543d3b33fa7cf41f182b83e398a8eddb56c97c029025af695a"},
-    {file = "robotframework_evidence_reporter-0.3.1.tar.gz", hash = "sha256:173b21f7b7d456e65ef6bbfa45941295663c82da378365ff27df639b6c27c386"},
+    {file = "robotframework_evidence_reporter-0.4.0-py3-none-any.whl", hash = "sha256:99f1fcd8bcad49be0cd0b4a16cddda487a150ab375481e24b7c31f3b3ba9d557"},
+    {file = "robotframework_evidence_reporter-0.4.0.tar.gz", hash = "sha256:ddd3d0ce9f428de85ea130cb80c66b52a9df458627d1c2fbdfd96ad5fac6d9a7"},
 ]
 
 [package.dependencies]
@@ -1613,4 +1613,4 @@ h11 = ">=0.16.0,<1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.15"
-content-hash = "fbf0bfad1f917b5809fa003456db920467ff6f4465b0b427e18186ac94ad7cee"
+content-hash = "53f83a68f34c08e4e1241e3ac11e527d0329c7311864169613b41abda6853411"
