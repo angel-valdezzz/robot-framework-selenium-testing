@@ -14,7 +14,7 @@ robot --outputdir results tests
 rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
 ```
 
-Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.3.1`. Poetry se conserva como alternativa.
+Evidence Reporter se instala desde PyPI con `pip install robotframework-evidence-reporter==0.4.0`. Poetry se conserva como alternativa.
 
 La interfaz de los reportes está en inglés por defecto. Usa `rf-evidence build results/evidence --output results/business-reports-es --formats html pdf docx --language es` para generar la versión en español a partir de las mismas evidencias.
 
@@ -29,7 +29,7 @@ La interfaz de los reportes está en inglés por defecto. Usa `rf-evidence build
 | DataDriver | 1.11.2 | Un caso ejecutable por fila de la matriz CSV |
 | PyTabify (`pytabify`) | 3.0.0 | Carga y preparación de tablas desde Robot |
 | FakerLibrary | 6.0.0 | Datos ficticios con Faker y locale `es_MX` |
-| Evidence Reporter | 0.3.1 | HTML PDF Word y manifiesto de evidencias |
+| Evidence Reporter | 0.4.0 | HTML PDF Word y manifiesto de evidencias |
 | Marka | 0.1.0 | Highlights, dots numerados, etiquetas y notas para capturas |
 | Robocop | 9.1.0 | Linter y formatter |
 | RobotCode | Extensión VS Code | Análisis, ejecución y formato al guardar |
@@ -239,7 +239,7 @@ poetry run rf-evidence build results/evidence --output results/business-reports 
 
 Se genera un HTML autocontenido por caso, con estado final, tiempos, metadatos, hitos opcionales y capturas. Las capturas fallidas advierten por defecto sin cambiar el resultado del caso. El workflow E2E genera los HTML también si Robot falla y los incluye en el artefacto `parabank-results`.
 
-La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.3.1 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
+La librería vive en [su repositorio independiente](https://github.com/angel-valdezzz/robotframework-evidence-reporter). La versión 0.4.0 se instala desde [PyPI](https://pypi.org/project/robotframework-evidence-reporter/) usando pip o Poetry. No se copia el código de la librería dentro del framework.
 
 Utiliza una carpeta de resultados nueva por ejecución o elimina los resultados anteriores antes de iniciar: el generador incluye todos los JSON encontrados.
 
@@ -272,3 +272,15 @@ Pages conserva únicamente la última publicación válida y su ZIP. El artefact
 ## Diseño técnico
 
 [Arquitectura, flujo de ejecución y publicación](docs/architecture.md): diagramas de las capas, datos, evidencia, limpieza y CI, con referencias a las rutas reales del proyecto.
+
+## Reportes actualizados y marca opcional
+
+Evidence Reporter 0.4.0 genera HTML, PDF y DOCX con el diseño aprobado. Pasos agrupa las capturas; Logs permite buscar y filtrar mensajes. PDF y Word conservan tablas ligeras, bandas de hitos y marcos discretos por estado. Las keywords de captura y la configuración de evidencias existente siguen siendo compatibles.
+
+```bash
+robot --outputdir results tests
+rf-evidence build results/evidence --output results/business-reports --formats html pdf docx
+rf-evidence build results/evidence --output results/branded-reports --formats html pdf docx --language es --brand-config config/report-brand.json
+```
+
+La configuración de marca es abierta, gratuita y opcional. Usa `config/report-brand.json` como punto de partida; agrega `"logo": "logo.png"` para una imagen ubicada junto al JSON. La generación conserva todas las capturas originales. CI ejecuta los escenarios, verifica los tres formatos y publica reportes nuevos en cada ejecución de main.
