@@ -52,3 +52,8 @@ La ampliación genera HTML, PDF y DOCX por caso, junto con manifest.json, en el 
 La suite incorpora ocho casos: los cinco anteriores y tres recorridos independientes de registro/cierre, apertura de ahorro y transferencia con comprobación exacta de saldos y movimientos. Robocop y dry-run validan la estructura.
 
 En [la ejecución del PR #7](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/37418563210), cuatro casos pasaron y cuatro fallaron al cargar el resumen de cuentas después del login, antes de ejecutar las nuevas operaciones bancarias. Se generaron y verificaron ocho reportes HTML/PDF/DOCX y el ZIP. La validación funcional de apertura y transferencias queda pendiente de la recuperación de ParaBank; se mantienen las assertions y los fallos reales.
+
+
+### Recuperación y validación funcional
+
+En [ParaBank E2E del PR #7](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/37439421904), el servicio volvió a responder y los ocho casos pasaron con Chrome, incluidas apertura de ahorro, transferencia de 10.00 y comprobación exacta del débito/crédito y movimientos. También pasaron las cuatro pruebas de retención, la generación/verificación de ocho HTML/PDF/DOCX y Quality. Esta ejecución resuelve la validación pendiente descrita arriba; la disponibilidad futura del demo sigue siendo externa al proyecto.

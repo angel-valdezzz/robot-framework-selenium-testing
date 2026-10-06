@@ -81,7 +81,7 @@ Los auxiliares dentro de los recursos, como `Completar Información Personal`, r
 
 Tres escenarios independientes amplían la suite a ocho casos: registro y cierre de sesión; registro, acceso y apertura de una cuenta de ahorro; y transferencia entre cuentas con verificación de ambos saldos y movimientos. Marka señala los campos y resultados en las capturas.
 
-La validación real de estos recorridos está pendiente de la recuperación de ParaBank; lint y dry-run comprueban la estructura, sin sustituir la ejecución del banco.
+Los ocho recorridos pasaron con Chrome en [GitHub Actions](https://github.com/angel-valdezzz/robotframework-selenium-testing/actions/runs/37439421904), tras recuperarse ParaBank. Robocop y dry-run también pasaron; el banco sigue siendo un demo compartido sujeto a interrupciones.
 
 ## Pages como variables Python
 
